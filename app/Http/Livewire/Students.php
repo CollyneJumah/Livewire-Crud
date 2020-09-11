@@ -4,12 +4,18 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Student;
+use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+
 
 class Students extends Component
 {
-    public $firstname,$lastname,$phone,$gender,$fetchStudent,$student_id;
+    public $firstname,$lastname,$phone,$gender,$avatar,$fetchStudent,$student_id;
     public $studentUpdate = false;
     public $searchStudent;
+
+    // use WithPagination;
+    use WithFileUploads;
 
     //validate
     // public function hydrate(){
@@ -21,6 +27,18 @@ class Students extends Component
     //     ]);
     // }
 
+    //realtime validation
+    public function updated($fields)
+    {
+        $this->validateOnly($fields,
+        [
+            'firstname' => ['required'],
+            'lastname' => ['required'],
+            'phone' => ['required','unique:students','starts_with:+2547'],
+            'gender' => ['required'],
+            'avatar' => ['required','image','max:1024','mimes:jpg,jpeg,gif,png']
+        ]);
+    }
     //insert student
     public function CreateStudent()
     {
@@ -28,8 +46,9 @@ class Students extends Component
         $this->validate([
             'firstname' => ['required'],
             'lastname' => ['required'],
-            'phone' => ['required','max:10','unique:students'],
+            'phone' => ['required','unique:students','starts_with:+2547'],
             'gender' => ['required'],
+            'avatar' => ['required','image','max:1024','mimes:jpg,jpeg,gif,png']
         ]);
         //1.call the model
         Student::create([
@@ -38,7 +57,8 @@ class Students extends Component
             'phone' => $this->phone,
             'gender' => $this->gender
         ]);
-        return view('livewire.students')->with('message','user created successfully');
+        session()->flash('message','👍 user created successfully 😊');
+        // return view('livewire.students')->with('message','user created successfully');
     }
 
     private function clearData()
@@ -57,7 +77,10 @@ class Students extends Component
             ->orWhere('lastname','like', '%' .$this->searchStudent. '%')
             ->get();
 
-        return view('livewire.students');
+        return view('livewire.students',[
+            'paginateStudent' => Student::latest()->paginate(4)
+        ]
+        );
     }
     protected $updateQueryString = ['searchStudent'];
     public function mount()
@@ -89,7 +112,7 @@ class Students extends Component
             'phone' => $this->phone,
             'gender' => $this->gender
         ]);
-
+            session()->flash('message','👌 user updated successfuly👏');
         $studentUpdate=false;
     }
 
@@ -100,6 +123,7 @@ class Students extends Component
             # code...
             $deleteStudent = Student::where('id', $id);
             $deleteStudent->delete();
+            session()->flash('delete','😢user Deleted successfuly ');
         }
     }
 

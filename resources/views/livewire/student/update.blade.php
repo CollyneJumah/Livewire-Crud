@@ -1,3 +1,8 @@
+@if (session()->has('message'))
+    <div class="alert alert-success">
+        {{ session('message')}}
+    </div>
+@endif
 <form autocomplete="off" class="p-4">
     <div class="form-row">
         <input type="hidden" wire:model="student_id">

@@ -1,3 +1,8 @@
+@if (session()->has('message'))
+    <div class="alert alert-success">
+        {{ session('message')}}
+    </div>
+@endif
 <form autocomplete="off" class="p-4">
     <div class="form-row">
         <div class="form-group col-md-3">
@@ -21,6 +26,7 @@
                 <strong class="invalid-feedback">{{ $message}}</strong>
             @enderror
         </div>
+        
         <div class="form-group col-md-3">
             <label for="gender">Gender</label>
             <select  class="form-control @error('gender') is-invalid @enderror" wire:model="gender">
@@ -31,6 +37,12 @@
             @if ($errors->has('gender'))
                 <span class="invalid-feedback">{{ $errors->first('gender')}}</span>
             @endif
+        </div>
+        <div class="form-group col-md-4">
+            <img src="{{ $avatar}}" alt="">
+            <label for="gender">Image</label>
+            <input type="file" class="form-control" wire:model="avatar">
+            @error('avatar') <span class="error">{{ $message }}</span> @enderror
         </div>
     </div>
     <input type="submit" wire:click.prevent="CreateStudent" class="btn btn-dark btn-xs float-right" value="create student" >

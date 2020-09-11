@@ -11,7 +11,11 @@
     <hr>
     <span class="float-right p-4"><input type="text" wire:model="searchStudent" class="form-control" placeholder="search..."></span>
 <hr>
-
+@if (session()->has('delete'))
+    <div class="alert alert-danger">
+        {{ session('delete')}}
+    </div>
+@endif
     <table class="table table-bordered table-stripped">
         <thead class="bg-dark text-white">
             <tr>
@@ -48,5 +52,6 @@
             
         </tbody>
     </table>
+    {{ $paginateStudent->links()}}
     {{-- {{ $fetchStudent->links()}} --}}
 </div>
